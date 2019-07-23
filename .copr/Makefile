@@ -7,7 +7,7 @@ RELEASE=
 CWD=${shell pwd}
 
 RPMBUILD=/tmp/rpmbuild
-SRPMS=$(CWD)
+SRPMS=$(outdir)
 RPMS=$(outdir)
 
 MOCK_CHROOT=epel-6-cernonly-x86_64
