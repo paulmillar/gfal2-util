@@ -1,5 +1,5 @@
 NAME=gfal2-util
-SPEC=$(spec)
+SPEC=packaging/rpm/gfal2-util.spec
 VERSION=${shell grep '^Version:' $(SPEC) | awk '{print $$2}' }
 # Leave blank. To be overriden by CI tools.
 RELEASE=
@@ -50,7 +50,7 @@ clean:
 	rm -rfv "$(RPMBUILD)"
 
 dist: clean
-	tar vczf "$(NAME)-$(VERSION).tar.gz" --exclude="packaging" --exclude=".git" --exclude="*.pyc" --transform="s,^,$(NAME)-$(VERSION)/," ..
+	tar vczf "$(NAME)-$(VERSION).tar.gz" --exclude="packaging" --exclude=".git" --exclude="*.pyc" --transform="s,^,$(NAME)-$(VERSION)/," src test doc setup.py LICENSE MANIFEST RELEASE-NOTES VERSION
 
 $(RPMBUILD):
 	mkdir -p "$(RPMBUILD)"
