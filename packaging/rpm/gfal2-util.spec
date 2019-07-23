@@ -1,19 +1,15 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
-%{!?python_version:  %global python_version  %(%{__python} -c "from sys import version_info; print('%d.%d'% (version_info[0],version_info[1]))")}
-
 Name:           gfal2-util
 Version:        1.5.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        GFAL2 utility tools
 Group:          Applications/Internet
 License:        GPLv3
 URL:            http://dmc.web.cern.ch/
-# git clone https://gitlab.cern.ch/dmc/gfal2-util.git gfal2-util-1.5.1 --depth=1
-# pushd gfal2-util-1.5.1
-# git checkout v1.5.1
+# git clone https://gitlab.cern.ch/dmc/gfal2-util.git gfal2-util-1.5.3 --depth=1
+# pushd gfal2-util-1.5.3
+# git checkout v1.5.3
 # popd
-# tar czf gfal2-util-1.5.1.tar.gz --exclude-vcs gfal2-util-1.5.1
+# tar czf gfal2-util-1.5.3.tar.gz --exclude-vcs gfal2-util-1.5.3
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
@@ -26,11 +22,6 @@ BuildRequires:  python3-devel
 
 Requires:       gfal2-python3 >= 1.9.0
 Requires:       python3
-
-%if %{?fedora}%{!?fedora:0} < 26
-BuildRequires:      python-argparse
-Requires:       python-argparse
-%endif
 
 %description
 gfal2-util is a set of basic utility tools for file 
@@ -73,6 +64,9 @@ python3 test/functional/test_all.py
 
 
 %changelog
+* Tue Jul 23 2019 Andrea Manzi <amanzi at cern.ch> - 1.5.3-2
+- New py3 only version for F31
+
 * Fri Mar 29 2019 Andrea Manzi <amanzi at cern.ch> - 1.5.3-1
 - New upstream release
 
