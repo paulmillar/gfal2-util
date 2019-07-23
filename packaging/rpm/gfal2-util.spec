@@ -22,7 +22,7 @@ BuildArch:      noarch
 BuildRequires:  gfal2-core
 BuildRequires:  gfal2-python3 >= 1.9.0
 BuildRequires:  gfal2-plugin-file
-BuildRequires:  python3
+BuildRequires:  python3-devel
 
 Requires:       gfal2-python3 >= 1.9.0
 Requires:       python3
