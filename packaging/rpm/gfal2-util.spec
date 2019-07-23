@@ -20,12 +20,12 @@ BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch:      noarch
 
 BuildRequires:  gfal2-core
-BuildRequires:  gfal2-python >= 1.9.0
+BuildRequires:  gfal2-python3 >= 1.9.0
 BuildRequires:  gfal2-plugin-file
-BuildRequires:  python2
+BuildRequires:  python3
 
-Requires:       gfal2-python >= 1.9.0
-Requires:       python2
+Requires:       gfal2-python3 >= 1.9.0
+Requires:       python3
 
 %if %{?fedora}%{!?fedora:0} < 26
 BuildRequires:      python-argparse
@@ -40,7 +40,7 @@ gridFTP, http(s), SRM, xrootd, etc...
 
 %clean
 rm -rf %{buildroot}
-python setup.py clean
+python3 setup.py clean
 
 %prep
 %setup -q
@@ -55,18 +55,18 @@ if [ "$gfal2_util_ver" != "$gfal2_util_spec_ver" ]; then
     exit 1
 fi
 
-python setup.py build
+python3 setup.py build
 
 %install
 rm -rf %{buildroot}
-python setup.py install --root=%{buildroot}
+python3 setup.py install --root=%{buildroot}
 
 %check
-python test/functional/test_all.py
+python3 test/functional_py3/test_all.py
 
 %files
 %defattr (-,root,root)
-%{python_sitelib}/gfal2_util*
+%{python3_sitelib}/gfal2_util*
 %{_bindir}/gfal-*
 %{_mandir}/man1/*
 %doc RELEASE-NOTES VERSION LICENSE readme.html

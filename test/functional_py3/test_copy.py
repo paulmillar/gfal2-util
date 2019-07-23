@@ -1,7 +1,7 @@
 import unittest
-from . import utils
+import utils
 import os
-from  . base import TestBase
+from base import TestBase
 
 class UtilCopyTest(TestBase):
     def test_copy(self):

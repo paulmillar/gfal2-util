@@ -1,5 +1,5 @@
 import unittest
-from . import utils
+import utils
 import shutil
 import os
 

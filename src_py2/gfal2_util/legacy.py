@@ -20,9 +20,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import base
+import base
 import time
-from .base import CommandBase
+from base import CommandBase
 
 
 class CommandLegacy(CommandBase):
@@ -55,7 +55,7 @@ class CommandLegacy(CommandBase):
         """
         replicas = self.context.getxattr(self.params.lfc, 'user.replicas').split('\n')
         for replica in replicas:
-            print(replica)
+            print replica
 
     @base.arg('--pin-lifetime', action='store', type=int, default=0, help='Desired pin lifetime')
     @base.arg('--desired-request-time', action='store', type=int, default=28800, help='Desired total request time')
@@ -67,11 +67,11 @@ class CommandLegacy(CommandBase):
         (ret, token) = self.context.bring_online(
             self.params.surl, self.params.pin_lifetime, self.params.desired_request_time, True
         )
-        print("Got token", token)
+        print "Got token", token
         wait = self.params.timeout
         sleep=1
         while ret == 0 and wait > 0:
-            print("Request queued, sleep %d seconds..." % sleep)
+            print "Request queued, sleep %d seconds..." % sleep
             time.sleep(sleep)
             ret = self.context.bring_online_poll(self.params.surl, token)
             wait -= 1
@@ -79,6 +79,6 @@ class CommandLegacy(CommandBase):
             sleep = min(sleep, 300)
 
         if ret > 0:
-            print("File brought online with token", token)
+            print "File brought online with token", token
         elif wait <= 0:
             raise Exception("Timeout expired while polling")

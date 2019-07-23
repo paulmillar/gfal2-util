@@ -20,12 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .base import CommandBase
-from . import commands # @UnusedImport
-from . import ls # @UnusedImport
-from . import legacy # @UnusedImport
-from . import copy # @UnusedImport
-from . import rm # @UnusedImport
+from base import CommandBase
+import commands # @UnusedImport
+import ls # @UnusedImport
+import legacy # @UnusedImport
+import copy # @UnusedImport
+import rm # @UnusedImport
 
 
 class CommandFactory(object):

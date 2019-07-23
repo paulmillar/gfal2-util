@@ -23,7 +23,7 @@
 import argparse
 import logging
 import signal
-import urllib.parse
+from urlparse import urlparse, urlunparse
 from threading import Thread
 import sys
 import errno
@@ -31,7 +31,7 @@ import os
 
 import gfal2
 from gfal2 import GError
-from .gfal2_utils_parameters import apply_option
+from gfal2_utils_parameters import apply_option
 
 
 VERSION = '1.5.3'
@@ -71,7 +71,7 @@ class Gfal2VersionAction(argparse.Action):
         version_str = "gfal2-util version %s (gfal2 %s)" % (VERSION, gfal2.get_version())
         for plugin in sorted(gfal2.creat_context().get_plugin_names()):
             version_str += '\n\t' + plugin
-        print(version_str)
+        print version_str
         sys.exit(0)
 
 
@@ -115,10 +115,10 @@ class CommandBase(object):
     def executor(self, func):
         try:
             self.return_code = func(self)
-        except IOError as e:
+        except IOError, e:
             if e.errno != errno.EPIPE:
                 raise
-        except GError as e:
+        except GError, e:
             sys.stderr.write("%s error: %d (%s) - %s\n" % (self.progr, e.code, os.strerror(e.code), e.message))
 
             self.return_code = e.code
@@ -205,8 +205,8 @@ class CommandBase(object):
                             help="maximum time for the operation to terminate - default is 1800 seconds")
         self.parser.add_argument('-E', '--cert', type=str, default=None, help="user certificate")
         self.parser.add_argument('--key', type=str, default=None, help="user private key")
-        self.parser.add_argument('-4', dest='ipv4', action='store_true', help='forces gfal2-util to use IPv4 addresses only')
-        self.parser.add_argument('-6', dest='ipv6', action='store_true', help='forces gfal2-util to use IPv6 addresses only')
+        self.parser.add_argument('-4', dest='ipv4', action='store_true', help='forces gfal2-util to use IPv4 addresses only. N.B. this is valid only for gridftp')
+        self.parser.add_argument('-6', dest='ipv6', action='store_true', help='forces gfal2-util to use IPv6 addresses only. N.B. this is valid only for gridftp')
         self.parser.add_argument('-C', '--client-info', type=str, help="provide custom client-side information",
                             action='append')
 
@@ -220,11 +220,11 @@ class CommandBase(object):
 def surl(value):
     """
     Special "type" for surls.
-    It will convert, for instance, paths of the form "/path" to "file:///path"
+    It will convert, for instance, paths of the form "/path" to "file:///path" 
     """
     if value == '-':
         return value
-    parsed = urllib.parse.urlparse(value)
+    parsed = urlparse(value)
     if not parsed[0]:
-        return urllib.parse.urlunparse(('file', None, os.path.abspath(parsed[2]), None, None, None))
+        return urlunparse(('file', None, os.path.abspath(parsed[2]), None, None, None))
     return value

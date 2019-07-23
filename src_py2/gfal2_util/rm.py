@@ -25,8 +25,8 @@ import stat
 import errno
 
 import gfal2
-from . import base
-from .base import CommandBase
+import base
+from base import CommandBase
 
 
 class CommandRm(CommandBase):
@@ -34,6 +34,8 @@ class CommandRm(CommandBase):
               help="remove directories and their contents recursively")
     @base.arg("--dry-run", action='store_true',
               help="do not perform any actual change, just print what would happen")
+    @base.arg("--just-delete", action='store_true',
+              help="do not perform any check on the file, this is needed for HTTP signed URLs")
     @base.arg("--from-file", type=str, default=None,
               help="read surls from a file")
     @base.arg("--bulk", action='store_true', default=False,
@@ -70,31 +72,34 @@ class CommandRm(CommandBase):
         """
         Perform the action, either removing or just informing
         """
-        try:
-            st = self.context.stat(surl)
-        except gfal2.GError as e:
-            if e.code == errno.ENOENT:
-                print("%s\tMISSING" % surl)
-                return
-            else:
-                print("%s\tFAILED" % surl)
-                raise
-
-        if stat.S_ISDIR(st.st_mode):
-            self._do_rmdir(surl)
-        elif self.params.dry_run:
-            print("%s\tSKIP" % surl)
-        else:
+        if not self.params.just_delete:
             try:
-                self.context.unlink(surl)
-                print("%s\tDELETED" % surl)
-            except gfal2.GError as e:
+                st = self.context.stat(surl)
+            except gfal2.GError, e:
                 if e.code == errno.ENOENT:
-                    print("%s\tMISSING" % surl)
+                    print "%s\tMISSING" % surl
                     return
                 else:
-                    print("%s\tFAILED" % surl)
+                    print "%s\tFAILED" % surl
                     raise
+
+            if stat.S_ISDIR(st.st_mode):
+                self._do_rmdir(surl)
+                return
+        if self.params.dry_run:
+            print "%s\tSKIP" % surl
+            return
+        
+        try:
+            self.context.unlink(surl)
+            print "%s\tDELETED" % surl
+        except gfal2.GError, e:
+            if e.code == errno.ENOENT:
+                print "%s\tMISSING" % surl
+                return
+            else:
+                print "%s\tFAILED" % surl
+                raise
 
     def _do_rmdir(self, surl):
         """
@@ -115,16 +120,16 @@ class CommandRm(CommandBase):
 
         # Rmdir self
         if self.params.dry_run:
-            print("%s\tSKIP DIR" % surl)
+            print "%s\tSKIP DIR" % surl
         else:
             try:
                 self.context.rmdir(surl)
-                print("%s\tRMDIR" % surl)
-            except gfal2.GError as e:
+                print "%s\tRMDIR" % surl
+            except gfal2.GError, e:
                 if e.code == errno.ENOENT:
-                    print("%s\tMISSING" % surl)
+                    print "%s\tMISSING" % surl
                 else:
-                    print("%s\tFAILED" % surl)
+                    print "%s\tFAILED" % surl
                     raise
 
     def _do_bulk(self, surls):
@@ -132,12 +137,12 @@ class CommandRm(CommandBase):
         Do a bulk deletion
         """
         if self.params.dry_run:
-            print("\tBULK DELETION")
+            print "\tBULK DELETION"
             return
 
         errors = self.context.unlink(surls)
         for error, surl in zip(errors, surls):
             if error is None:
-                print("%s\tDELETED" % surl)
+                print "%s\tDELETED" % surl
             else:
-                print("%s\tFAILED: %s" % (surl, error))
+                print "%s\tFAILED: %s" % (surl, error)

@@ -1,8 +1,8 @@
 import unittest
-from . import utils
+import utils
 import shutil
 import os
-from .base import TestBase
+from base import TestBase
 
 class UtilGeneralTest(TestBase): 
     def test_protocol_not_supported(self):

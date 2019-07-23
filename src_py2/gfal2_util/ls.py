@@ -10,9 +10,9 @@ import os
 import sys
 import stat
 
-from . import base
-from .base import CommandBase
-from .utils import file_mode_str
+import base
+from base import CommandBase
+from utils import file_mode_str
 
 
 def full_iso(date):
@@ -64,7 +64,7 @@ if color_env:
         try:
             typ, color = entry.split('=')
             color_dict[typ] = color
-        except Exception as e:
+        except Exception, e:
             print >>sys.stderr, "unparsable value for LS_COLORS environment variable:", entry
             pass
 

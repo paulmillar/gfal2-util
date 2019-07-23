@@ -27,9 +27,9 @@ import stat
 import errno
 
 import gfal2
-from . import base
-from .base import CommandBase
-from .progress import Progress
+import base
+from base import CommandBase
+from progress import Progress
 
 
 log = logging.getLogger(__name__)
@@ -66,6 +66,8 @@ class CommandCopy(CommandBase):
               help="global timeout for the transfer operation")
     @base.arg('-K', "--checksum", type=str, default=None,
               help='checksum algorithm to use, or algorithm:value')
+    @base.arg("--copy-mode", type=str, default='', choices=['pull', 'push', 'streamed',''],
+              help='copy mode. N.B. supported only for HTTP/DAV to HTTP/DAV transfers, if not specified the pull mode will be executed first with fallbacks to other modes in case of errors')
     @base.arg("--checksum-mode", type=str, default='both', choices=['source', 'target', 'both'],
               help='checksum validation mode')
     @base.arg('--from-file', type=str, default=None,
@@ -132,7 +134,7 @@ class CommandCopy(CommandBase):
     def _failure(self, msg, errno):
         if self.params.abort_on_failure or not self.params.recursive:
             raise gfal2.GError(msg, errno)
-        print("ERROR (%d): %s" % (errno, msg))
+        print "ERROR (%d): %s" % (errno, msg)
         return False
 
     def _do_copy(self, source, destination):
@@ -140,7 +142,7 @@ class CommandCopy(CommandBase):
         try:
             source_stat = self.context.stat(source)
             source_isdir = stat.S_ISDIR(source_stat.st_mode)
-        except gfal2.GErrora as e:
+        except gfal2.GError, e:
             return self._failure("Could not stat the source: %s" % e.message, e.code)
 
         dest_isdir = False
@@ -168,14 +170,14 @@ class CommandCopy(CommandBase):
         if source_isdir and not dest_exists:
             try:
                 self._mkdir(destination)
-            except gfal2.GError as e:
+            except gfal2.GError, e:
                 return self._failure("Could not create the directory: %s" % e.message, e.code)
             return self._recursive_copy(source, destination)
         elif dest_isdir and source_isdir:
             if self.params.recursive:
                 return self._recursive_copy(source, destination)
             else:
-                print("Skipping %s" % source)
+                print "Skipping %s" % source
                 return True
         elif dest_isdir:
             if destination[-1] != '/':
@@ -185,9 +187,9 @@ class CommandCopy(CommandBase):
         return self._do_file_copy(source, destination, source_stat.st_size)
 
     def _mkdir(self, surl):
-        print("Mkdir %s" % surl)
+        print "Mkdir %s" % surl
         if not self.params.dry_run:
-            self.context.mkdir_rec(surl, 755)
+            self.context.mkdir_rec(surl, 0755)
 
     def _recursive_copy(self, source, destination):
         all_sources = self.context.listdir(source)
@@ -227,6 +229,23 @@ class CommandCopy(CommandBase):
             if len(chk_args) == 1:
                 chk_args.append('')
             t.set_checksum(mode, chk_args[0], chk_args[1])
+        
+	if self.params.copy_mode:
+            if self.params.copy_mode == 'pull':
+                self.context.set_opt_boolean("HTTP PLUGIN", "ENABLE_REMOTE_COPY", True)
+                self.context.set_opt_boolean("HTTP PLUGIN", "ENABLE_FALLBACK_TPC_COPY", False)
+                self.context.set_opt_string("HTTP PLUGIN", "DEFAULT_COPY_MODE", "3rd pull")
+            elif self.params.copy_mode == 'push':
+                self.context.set_opt_boolean("HTTP PLUGIN", "ENABLE_REMOTE_COPY", True)
+                self.context.set_opt_boolean("HTTP PLUGIN", "ENABLE_FALLBACK_TPC_COPY", False)
+                self.context.set_opt_string("HTTP PLUGIN", "DEFAULT_COPY_MODE", "3rd push")
+            elif self.params.copy_mode == 'streamed':
+                self.context.set_opt_boolean("HTTP PLUGIN", "ENABLE_REMOTE_COPY", False)
+                self.context.set_opt_string("HTTP PLUGIN", "DEFAULT_COPY_MODE", "streamed")
+            else:
+                self.context.set_opt_boolean("HTTP PLUGIN", "ENABLE_REMOTE_COPY", True)
+                self.context.set_opt_boolean("HTTP PLUGIN", "ENABLE_FALLBACK_TPC_COPY", True)
+                self.context.set_opt_string("HTTP PLUGIN", "DEFAULT_COPY_MODE", "3rd pull")
 
         if event_callback:
             t.event_callback = event_callback
@@ -236,14 +255,14 @@ class CommandCopy(CommandBase):
     def _do_file_copy(self, source, destination, source_size):
         def event_callback(event):
             if self.params.verbose:
-                print("event: %s" % str(event))
+                print "event: %s" % str(event)
 
         def monitor_callback(src, dst, avg, inst, trans, elapsed):
             if self.params.verbose:
-                print("monitor: %s %s %s %s %s %s" % (
+                print "monitor: %s %s %s %s %s %s" % (
                     str(src), str(dst),
                     str(avg), str(inst), str(trans), str(elapsed)
-                ))
+                )
 
             if self.progress_bar:
                 self.progress_bar.update(trans, source_size, avg, elapsed)
@@ -257,7 +276,7 @@ class CommandCopy(CommandBase):
             self.progress_bar.update(total_size=source_size)
             self.progress_bar.start()
         else:
-            print("Copying %d bytes %s => %s" % (source_size, source, destination))
+            print "Copying %d bytes %s => %s" % (source_size, source, destination)
 
         try:
             if not self.params.dry_run:
@@ -265,7 +284,7 @@ class CommandCopy(CommandBase):
             if self.progress_bar:
                 self.progress_bar.stop(True)
                 print
-        except gfal2.GError as e:
+        except gfal2.GError, e:
             if self.progress_bar:
                 self.progress_bar.stop(False)
                 print

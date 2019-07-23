@@ -1,8 +1,8 @@
-from .base import TestBase
+from base import TestBase
 import unittest
 import os
 import shutil
-from . import utils
+import utils
 
 class UtilMkdirTest(TestBase):    
     def test_mkdir(self):

@@ -1,7 +1,8 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 ## gfal 2.0 command line tools
 ## @author Adrien Devresse <adevress@cern.ch> CERN
 ## @author Duarte Meneses <duarte.meneses@cern.ch> CERN
+## @author Andrea Manzi <amanzi@cern.ch> CERN
 ## @license GPLv3
 ##
 

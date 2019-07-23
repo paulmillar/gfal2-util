@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #
 # Copyright (c) CERN 2013-2015
 #
@@ -20,9 +19,3 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-from gfal2_util.shell import Gfal2Shell
-import sys
-
-if __name__ == "__main__":
-        sys.exit(Gfal2Shell().main(sys.argv))

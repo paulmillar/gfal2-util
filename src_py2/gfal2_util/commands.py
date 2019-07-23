@@ -25,9 +25,9 @@ import sys
 import stat
 from datetime import datetime
 
-from . import base
-from .base import CommandBase
-from .utils import file_type_str, file_mode_str
+import base
+from base import CommandBase
+from utils import file_type_str, file_mode_str
 
 
 class GfalCommands(CommandBase):
@@ -42,9 +42,9 @@ class GfalCommands(CommandBase):
             try:
                 mode = int(str(self.params.mode), 8)
             except ValueError:
-                mode = 755
+                mode = 0755
         else:
-            mode = 755
+            mode = 0755
         for d in self.params.directory:
             if self.params.parents:
                 self.context.mkdir_rec(d, mode)
@@ -104,7 +104,7 @@ class GfalCommands(CommandBase):
                 try:
                     v = self.context.getxattr(self.params.file, attr)
                     sys.stdout.write(attr + ' = ' + v + '\n')
-                except gfal2.GError as e:
+                except gfal2.GError, e:
                     sys.stdout.write(attr + ' FAILED: ' + str(e) + '\n')
 
     @base.arg('file', action='store', type=base.surl,
@@ -124,12 +124,12 @@ class GfalCommands(CommandBase):
         Stats a file
         """
         st = self.context.stat(self.params.file)
-        print("  File: '%s'" % self.params.file)
-        print("  Size: %d\t%s" % (st.st_size, file_type_str(stat.S_IFMT(st.st_mode))))
-        print("Access: (%04o/%s)\tUid: %d\tGid: %d\t" % (stat.S_IMODE(st.st_mode), file_mode_str(st.st_mode), st.st_uid, st.st_gid))
-        print("Access: %s" % datetime.fromtimestamp(st.st_atime).strftime("%Y-%m-%d %H:%M:%S.%f"))
-        print("Modify: %s" % datetime.fromtimestamp(st.st_mtime).strftime("%Y-%m-%d %H:%M:%S.%f"))
-        print("Change: %s" % datetime.fromtimestamp(st.st_ctime).strftime("%Y-%m-%d %H:%M:%S.%f"))
+        print "  File: '%s'" % self.params.file
+        print "  Size: %d\t%s" % (st.st_size, file_type_str(stat.S_IFMT(st.st_mode)))
+        print "Access: (%04o/%s)\tUid: %d\tGid: %d\t" % (stat.S_IMODE(st.st_mode), file_mode_str(st.st_mode), st.st_uid, st.st_gid)
+        print "Access: %s" % datetime.fromtimestamp(st.st_atime).strftime("%Y-%m-%d %H:%M:%S.%f")
+        print "Modify: %s" % datetime.fromtimestamp(st.st_mtime).strftime("%Y-%m-%d %H:%M:%S.%f")
+        print "Change: %s" % datetime.fromtimestamp(st.st_ctime).strftime("%Y-%m-%d %H:%M:%S.%f")
 
     @base.arg('source', action='store', type=base.surl, help="original file name")
     @base.arg('destination', action='store', type=base.surl, help="new file name")
