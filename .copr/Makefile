@@ -50,7 +50,7 @@ clean:
 	rm -rfv "$(RPMBUILD)"
 
 dist: clean
-	tar vczf "$(NAME)-$(VERSION).tar.gz" --exclude="packaging" --exclude=".git" --exclude="*.pyc" --transform="s,^,$(NAME)-$(VERSION)/," src test doc setup.py LICENSE MANIFEST RELEASE-NOTES VERSION
+	tar vczf "$(NAME)-$(VERSION).tar.gz" --exclude="packaging" --exclude=".git" --exclude="*.pyc" --transform="s,^,$(NAME)-$(VERSION)/," src test doc setup.py LICENSE MANIFEST RELEASE-NOTES VERSION readme.html
 
 $(RPMBUILD):
 	mkdir -p "$(RPMBUILD)"
