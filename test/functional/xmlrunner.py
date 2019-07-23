@@ -194,7 +194,7 @@ class XMLTestRunner(object):
             err_s = sys.stderr.getvalue()
         except AttributeError:
             err_s = ""
-	sys.stdout = self._orig_stdout
+        sys.stdout = self._orig_stdout
         sys.stderr = self._orig_stderr
 
         time_taken = time.time() - start_time

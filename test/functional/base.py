@@ -18,8 +18,8 @@ class TestBase(unittest.TestCase):
         self.ffname1 = self.dirname + '/' + self.fname1
         self.ffname2 = self.dirname + '/' + self.fname2
 
-        utils.create_file(self.ffname1, 1025)
-        utils.create_file(self.ffname2, 1025)
+        utils.create_file(self.ffname1, 1024)
+        utils.create_file(self.ffname2, 1024)
 
     def tearDown(self):
         if os.path.isdir(self.dirname):

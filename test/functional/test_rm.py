@@ -15,9 +15,7 @@ class UtilRmTest(TestBase):
         self.assertTrue(os.path.exists(self.dirname))
         (ret, out, err) = utils.run_command('gfal-rm', 'file://' + self.dirname)
         self.assertTrue(os.path.exists(self.dirname))
-        print out
-        print err
-        self.assertTrue("directory" in err)
+        self.assertTrue(bytes("directory" , 'utf-8') in err)
         self.assertEqual(ret, 21)
 
     def test_multiple(self):

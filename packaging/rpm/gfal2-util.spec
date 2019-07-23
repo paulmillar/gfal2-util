@@ -62,7 +62,7 @@ rm -rf %{buildroot}
 python3 setup.py install --root=%{buildroot}
 
 %check
-python3 test/functional_py3/test_all.py
+python3 test/functional/test_all.py
 
 %files
 %defattr (-,root,root)

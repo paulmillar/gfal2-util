@@ -8,7 +8,7 @@ import inspect
 
 def create_file(path, size):
     fout = open(path, 'w')
-    fout.write(os.urandom(size))
+    fout.write(str(os.urandom(size)))
     fout.close()
 
 
@@ -43,7 +43,7 @@ def run_command_pty(cmd, args):
             except:
                 data = None
             if data:
-                output += data
+                output += str(data)
             else:
                 break
     os.close(master)

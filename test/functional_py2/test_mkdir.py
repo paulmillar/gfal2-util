@@ -47,7 +47,7 @@ class UtilMkdirTest(TestBase):
         self.assertTrue(os.path.isdir(self.dirname))
         self.assertEqual(len(out), 0)
         self.assertTrue(len(err) > 0)
-        self.assertTrue(bytes('File exists',  'utf-8')  in err)
+        self.assertTrue('File exists' in err)
         self.assertEqual(ret, 17)
         
     def test_already_exists_p(self):
